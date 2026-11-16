@@ -34,6 +34,20 @@ cd hudd
 
 其他指令：`./deploy.sh status`、`./deploy.sh logs`、`./deploy.sh restart`（修改 `.env` 後）、`./deploy.sh update`、`./deploy.sh down`。
 
+### 不用 Docker
+
+也可以從原始碼建置和執行 Hudd：取得程式碼、建置前端、準備 Python 環境，再用 systemd 執行 LiveKit 和網頁服務，前面放 Caddy 或 Nginx。詳細步驟見[從原始碼安裝](../../docs/install-from-source.zh-CN.md)（簡體中文）。想先在自己的電腦上試試：
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+然後開啟 `http://localhost:8000`（需要 Node.js、Python 3.11 以上和 [livekit-server](https://docs.livekit.io/home/self-hosting/local/)）。
+
 ## 設定
 
 所有設定都在 `.env` 裡（第一次執行時由 `.env.example` 產生）。最常修改的幾項：

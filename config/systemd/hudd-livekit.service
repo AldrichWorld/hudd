@@ -1,0 +1,15 @@
+# LiveKit media server for Hudd. Copy to /etc/systemd/system/ and adjust the paths if Hudd is not in /opt/hudd.
+[Unit]
+Description=LiveKit media server (Hudd)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=hudd
+ExecStart=/usr/local/bin/livekit-server --config /opt/hudd/config/livekit.yaml
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

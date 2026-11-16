@@ -7,6 +7,8 @@
 #   ./deploy.sh restart    restart everything (after editing .env)
 #   ./deploy.sh down       stop and remove the containers
 #   ./deploy.sh update     git pull, then deploy again
+#   ./deploy.sh config     only create .env and config/livekit.yaml (for running without Docker,
+#                          see docs/install-from-source.md)
 # ============================================================
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -67,8 +69,10 @@ prepare_env() {
       d=$(echo "$d" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]' | sed -E 's#^https?://##; s#/.*$##')
       if [[ -n "$d" ]]; then
         env_set DOMAIN "$d"
-        read -r -p "Email for HTTPS certificate notices (Let's Encrypt): " em
-        env_set ACME_EMAIL "$(echo "$em" | tr -d '[:space:]')"
+        if [[ -z "${NATIVE:-}" ]]; then
+          read -r -p "Email for HTTPS certificate notices (Let's Encrypt): " em
+          env_set ACME_EMAIL "$(echo "$em" | tr -d '[:space:]')"
+        fi
         read -r -p "Passcode to start meetings (Enter = anyone can start meetings): " pc
         env_set CREATE_PASSCODE "$pc"
       fi
@@ -87,7 +91,8 @@ prepare_env() {
       case "$(env_get HTTPS_PORT)" in ""|443|8443) env_set HTTPS_PORT 18443 ;; esac
     else
       env_set CADDYFILE Caddyfile.domain
-      [[ "$(env_get ACME_EMAIL)" == *@*.* ]] || die "With DOMAIN set, ACME_EMAIL must be an email address (for Let's Encrypt). Edit .env and run ./deploy.sh again."
+      # (Without Docker your own Caddy or Nginx handles certificates, so the email is not needed here)
+      [[ -n "${NATIVE:-}" || "$(env_get ACME_EMAIL)" == *@*.* ]] || die "With DOMAIN set, ACME_EMAIL must be an email address (for Let's Encrypt). Edit .env and run ./deploy.sh again."
       env_set HTTP_BIND 0.0.0.0; env_set HTTPS_BIND 0.0.0.0
       case "$(env_get HTTP_PORT)" in ""|8080|18080) env_set HTTP_PORT 80 ;; esac
       case "$(env_get HTTPS_PORT)" in ""|8443|18443) env_set HTTPS_PORT 443 ;; esac
@@ -191,6 +196,10 @@ case "$cmd" in
     compose up -d --force-recreate --remove-orphans
     wait_healthy && summary
     ;;
+  config)   # without Docker: settings and LiveKit config only
+    NATIVE=1 prepare_env; render_livekit_config
+    info "Wrote .env and config/livekit.yaml. Next steps: docs/install-from-source.md"
+    ;;
   down) compose down ;;
   status) compose ps ;;
   logs) shift; compose logs -f --tail=200 "$@" ;;
@@ -198,5 +207,5 @@ case "$cmd" in
     git pull --ff-only
     exec "$0" up
     ;;
-  *) die "Unknown command: $cmd (use: up | status | logs | restart | down | update)" ;;
+  *) die "Unknown command: $cmd (use: up | status | logs | restart | down | update | config)" ;;
 esac

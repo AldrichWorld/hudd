@@ -34,6 +34,20 @@ The script asks one question: your domain name.
 
 Other commands: `./deploy.sh status`, `./deploy.sh logs`, `./deploy.sh restart` (after editing `.env`), `./deploy.sh update`, `./deploy.sh down`.
 
+### Without Docker
+
+You can also build and run Hudd from source: get the code, build the front end, set up a Python environment, and run LiveKit and the web service with systemd behind Caddy or Nginx. The step-by-step guide is in [Install from source](docs/install-from-source.md). To try it on your own computer first:
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+Then open `http://localhost:8000` (needs Node.js, Python 3.11+ and [livekit-server](https://docs.livekit.io/home/self-hosting/local/)).
+
 ## Settings
 
 All settings are in `.env` (created on the first run from `.env.example`). The ones you are most likely to change:

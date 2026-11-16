@@ -34,6 +34,20 @@ cd hudd
 
 その他のコマンド：`./deploy.sh status`、`./deploy.sh logs`、`./deploy.sh restart`（`.env` を変更した後）、`./deploy.sh update`、`./deploy.sh down`。
 
+### Docker を使わない場合
+
+ソースコードからビルドして動かすこともできます。コードを取得し、フロントエンドをビルドし、Python の環境を用意して、LiveKit と Web サービスを systemd で Caddy か Nginx の後ろで動かします。手順は [ソースからのインストール](../../docs/install-from-source.md)（英語）にあります。まず自分のパソコンで試すには：
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+そのあと `http://localhost:8000` を開きます（Node.js、Python 3.11 以上、[livekit-server](https://docs.livekit.io/home/self-hosting/local/) が必要です）。
+
 ## 設定
 
 設定はすべて `.env` にあります（初回実行時に `.env.example` から作成）。よく変更するもの：

@@ -36,6 +36,20 @@ cd hudd
 
 أوامر أخرى: `./deploy.sh status` و`./deploy.sh logs` و`./deploy.sh restart` (بعد تعديل `.env`) و`./deploy.sh update` و`./deploy.sh down`.
 
+### بدون Docker
+
+يمكنك أيضًا بناء Hudd وتشغيله من الشيفرة المصدرية: جلب الشيفرة، وبناء الواجهة الأمامية، وتجهيز بيئة Python، ثم تشغيل LiveKit وخدمة الويب عبر systemd خلف Caddy أو Nginx. الدليل خطوة بخطوة (بالإنجليزية) في [التثبيت من الشيفرة المصدرية](../../docs/install-from-source.md). لتجربته أولًا على حاسوبك:
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+ثم افتح `http://localhost:8000` (يتطلب Node.js وPython 3.11+ و[livekit-server](https://docs.livekit.io/home/self-hosting/local/)).
+
 ## الإعدادات
 
 كل الإعدادات في الملف `.env` (يُنشأ عند التشغيل الأول من `.env.example`). أكثرها تغييرًا:

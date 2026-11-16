@@ -34,6 +34,20 @@ cd hudd
 
 기타 명령: `./deploy.sh status`, `./deploy.sh logs`, `./deploy.sh restart`(`.env` 수정 후), `./deploy.sh update`, `./deploy.sh down`.
 
+### Docker 없이
+
+소스 코드에서 빌드해 실행할 수도 있습니다. 코드를 받고, 프런트엔드를 빌드하고, Python 환경을 만든 다음, LiveKit과 웹 서비스를 systemd로 Caddy나 Nginx 뒤에서 실행합니다. 단계별 안내(영어)는 [소스에서 설치](../../docs/install-from-source.md)에 있습니다. 먼저 내 컴퓨터에서 써 보려면:
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+그런 다음 `http://localhost:8000`을 여세요(Node.js, Python 3.11 이상, [livekit-server](https://docs.livekit.io/home/self-hosting/local/) 필요).
+
 ## 설정
 
 모든 설정은 `.env`에 있습니다(처음 실행할 때 `.env.example`에서 생성). 자주 바꾸는 항목:

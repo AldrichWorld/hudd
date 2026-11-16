@@ -36,6 +36,20 @@ cd hudd
 
 فرمان‌های دیگر: `./deploy.sh status`، `./deploy.sh logs`، `./deploy.sh restart` (پس از ویرایش `.env`)، `./deploy.sh update`، `./deploy.sh down`.
 
+### بدون Docker
+
+می‌توانید Hudd را از کد منبع هم بسازید و اجرا کنید: کد را بگیرید، بخش رابط را بسازید، یک محیط Python آماده کنید و LiveKit و سرویس وب را با systemd پشت Caddy یا Nginx اجرا کنید. راهنمای گام‌به‌گام (به انگلیسی) در [نصب از کد منبع](../../docs/install-from-source.md) است. برای اینکه اول روی رایانهٔ خودتان امتحان کنید:
+
+```bash
+git clone https://github.com/AldrichWorld/hudd.git && cd hudd
+(cd web/vendor-src && npm ci && sh build.sh ../static/vendor)
+python3 -m venv .venv && .venv/bin/pip install -r web/requirements.txt
+livekit-server --dev --bind 127.0.0.1 &
+cd web && LIVEKIT_PUBLIC_URL=ws://localhost:7880 ../.venv/bin/uvicorn app.main:app --port 8000
+```
+
+سپس `http://localhost:8000` را باز کنید (به Node.js، Python 3.11+ و [livekit-server](https://docs.livekit.io/home/self-hosting/local/) نیاز دارد).
+
 ## تنظیمات
 
 همهٔ تنظیمات در `.env` است (در اولین اجرا از روی `.env.example` ساخته می‌شود). مواردی که بیشتر تغییر می‌کنند:

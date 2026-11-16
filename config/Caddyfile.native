@@ -1,0 +1,14 @@
+# Without Docker: Caddy installed on the server (e.g. /etc/caddy/Caddyfile).
+# Replace meet.example.com with your domain. Caddy gets and renews the HTTPS certificate by itself.
+meet.example.com {
+	# LiveKit signalling (WebSocket) and its API
+	@livekit path /rtc /rtc/* /twirp/*
+	handle @livekit {
+		reverse_proxy 127.0.0.1:7880
+	}
+	# Hudd pages and API
+	handle {
+		encode zstd gzip
+		reverse_proxy 127.0.0.1:8000
+	}
+}
