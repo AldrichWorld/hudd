@@ -5,6 +5,8 @@
 **Des réunions vidéo gratuites, directement dans le navigateur.** Rien à installer, aucun compte, aucune limite de durée et aucune base de données.
 Installez la vôtre en une seule commande.
 
+> **Vous voulez simplement vous réunir ?** [hudd.live](https://hudd.live) est le service hébergé construit sur Hudd : rien à installer, avec en plus des notes de réunion par IA, des arrière-plans virtuels et des effets à l’écran.
+
 ## Fonctionnalités
 
 - Réunions audio et vidéo dans tout navigateur récent, sur ordinateur comme sur téléphone
@@ -116,4 +118,4 @@ Tout le texte de l’interface se trouve dans [`web/static/js/i18n.js`](../../we
 
 [MIT](../../LICENSE). Les composants tiers et leurs licences sont listés dans [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt).
 
-Hudd est le cœur open source de [hudd.live](https://hudd.live).
+Hudd est le cœur open source de [hudd.live](https://hudd.live). Les tickets et les pull requests sont les bienvenus.

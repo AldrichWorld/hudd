@@ -5,6 +5,8 @@
 **Free video meetings that run in the browser.** Nothing to install, no accounts, no time limits, and no database.
 Run your own with one command.
 
+> **Just want to meet?** [hudd.live](https://hudd.live) is the hosted service built on Hudd: nothing to set up, plus extras such as AI meeting notes, virtual backgrounds and screen effects.
+
 ## Features
 
 - Video and audio meetings in any modern browser, on computers and phones
@@ -116,4 +118,4 @@ All interface text is in [`web/static/js/i18n.js`](web/static/js/i18n.js), one b
 
 [MIT](LICENSE). Third-party components and their licenses are listed in [THIRD-PARTY-NOTICES](web/static/THIRD-PARTY-NOTICES.txt).
 
-Hudd is the open-source core of [hudd.live](https://hudd.live).
+Hudd is the open-source core of [hudd.live](https://hudd.live). Issues and pull requests are welcome.

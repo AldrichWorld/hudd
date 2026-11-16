@@ -5,6 +5,8 @@
 **在瀏覽器裡直接使用的免費視訊會議。** 免安裝、免註冊、不限時長，也沒有資料庫。
 一條指令就能部署你自己的會議系統。
 
+> **只想開個會？** [hudd.live](https://hudd.live) 是基於 Hudd 的線上服務：不用部署，打開就能用，另有 AI 會議記錄、虛擬背景、螢幕特效等功能。
+
 ## 功能
 
 - 電腦和手機上的主流瀏覽器都能開影音會議
@@ -116,4 +118,4 @@ tests/run_tests.sh
 
 [MIT](../../LICENSE)。第三方元件及其授權見 [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt)。
 
-Hudd 是 [hudd.live](https://hudd.live) 的開源核心。
+Hudd 是 [hudd.live](https://hudd.live) 的開源核心。歡迎提交 Issue 和 Pull Request。

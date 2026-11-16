@@ -5,6 +5,8 @@
 **Videochamadas gratuitas que rodam no navegador.** Nada para instalar, sem contas, sem limite de tempo e sem banco de dados.
 Rode a sua com um único comando.
 
+> **Só quer fazer uma reunião?** O [hudd.live](https://hudd.live) é o serviço hospedado construído sobre o Hudd: nada para configurar, com extras como notas de reunião com IA, fundos virtuais e efeitos na tela.
+
 ## Recursos
 
 - Reuniões de áudio e vídeo em qualquer navegador moderno, em computadores e celulares
@@ -116,4 +118,4 @@ Todo o texto da interface está em [`web/static/js/i18n.js`](../../web/static/js
 
 [MIT](../../LICENSE). Componentes de terceiros e suas licenças estão em [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt).
 
-O Hudd é o núcleo de código aberto do [hudd.live](https://hudd.live).
+O Hudd é o núcleo de código aberto do [hudd.live](https://hudd.live). Issues e pull requests são bem-vindos.

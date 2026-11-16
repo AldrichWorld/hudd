@@ -5,6 +5,8 @@
 **브라우저에서 바로 쓰는 무료 화상 회의.** 설치도, 계정도, 시간 제한도, 데이터베이스도 없습니다.
 명령어 하나로 내 서버에 설치하세요.
 
+> **회의만 하면 된다면:** [hudd.live](https://hudd.live)는 Hudd를 기반으로 한 호스팅 서비스입니다. 설정할 것이 없고, AI 회의록, 가상 배경, 화면 효과 같은 추가 기능도 있습니다.
+
 ## 기능
 
 - 컴퓨터와 휴대폰의 최신 브라우저에서 음성·화상 회의
@@ -116,4 +118,4 @@ tests/run_tests.sh
 
 [MIT](../../LICENSE). 서드파티 구성 요소와 라이선스는 [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt)에 있습니다.
 
-Hudd는 [hudd.live](https://hudd.live)의 오픈 소스 핵심입니다.
+Hudd는 [hudd.live](https://hudd.live)의 오픈 소스 핵심입니다. 이슈와 풀 리퀘스트를 환영합니다.

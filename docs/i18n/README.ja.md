@@ -5,6 +5,8 @@
 **ブラウザで動く無料のビデオ会議。** インストール不要、アカウント不要、時間制限なし、データベースもありません。
 コマンド 1 つで自分のサーバーに導入できます。
 
+> **会議をするだけなら：** [hudd.live](https://hudd.live) は Hudd をもとにしたホスティング版サービスです。設定は不要で、AI 議事録・バーチャル背景・画面エフェクトなどの機能も使えます。
+
 ## 機能
 
 - パソコンとスマホの主要ブラウザで音声・ビデオ会議
@@ -116,4 +118,4 @@ tests/run_tests.sh
 
 [MIT](../../LICENSE)。サードパーティのコンポーネントとそのライセンスは [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt) にあります。
 
-Hudd は [hudd.live](https://hudd.live) のオープンソースのコアです。
+Hudd は [hudd.live](https://hudd.live) のオープンソースのコアです。Issue やプルリクエストを歓迎します。

@@ -5,6 +5,8 @@
 **在浏览器里直接使用的免费视频会议。** 免安装、免注册、不限时长，也没有数据库。
 一条命令就能部署你自己的会议系统。
 
+> **只想开个会？** [hudd.live](https://hudd.live) 是基于 Hudd 的在线服务：不用部署，打开就能用，另有 AI 会议纪要、虚拟背景、屏幕特效等功能。
+
 ## 功能
 
 - 电脑和手机上的主流浏览器都能开音视频会议
@@ -116,4 +118,4 @@ tests/run_tests.sh
 
 [MIT](../../LICENSE)。第三方组件及其许可证见 [THIRD-PARTY-NOTICES](../../web/static/THIRD-PARTY-NOTICES.txt)。
 
-Hudd 是 [hudd.live](https://hudd.live) 的开源核心。
+Hudd 是 [hudd.live](https://hudd.live) 的开源核心。欢迎提交 Issue 和 Pull Request。
