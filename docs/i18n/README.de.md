@@ -7,6 +7,8 @@ Mit einem Befehl auf deinem eigenen Server.
 
 > **Einfach nur ein Meeting?** [hudd.live](https://hudd.live) ist der gehostete Dienst auf Basis von Hudd: nichts einzurichten, dazu Extras wie KI-Besprechungsnotizen, virtuelle Hintergründe und Bildschirmeffekte.
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## Funktionen
 
 - Audio- und Videomeetings in jedem aktuellen Browser, auf Computern und Smartphones

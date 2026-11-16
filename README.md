@@ -7,6 +7,8 @@ Run your own with one command.
 
 > **Just want to meet?** [hudd.live](https://hudd.live) is the hosted service built on Hudd: nothing to set up, plus extras such as AI meeting notes, virtual backgrounds and screen effects.
 
+<p align="center"><a href="https://hudd.live"><img src="docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## Features
 
 - Video and audio meetings in any modern browser, on computers and phones

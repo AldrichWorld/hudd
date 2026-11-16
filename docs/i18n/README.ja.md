@@ -7,6 +7,8 @@
 
 > **会議をするだけなら：** [hudd.live](https://hudd.live) は Hudd をもとにしたホスティング版サービスです。設定は不要で、AI 議事録・バーチャル背景・画面エフェクトなどの機能も使えます。
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## 機能
 
 - パソコンとスマホの主要ブラウザで音声・ビデオ会議

@@ -7,6 +7,8 @@
 
 > **회의만 하면 된다면:** [hudd.live](https://hudd.live)는 Hudd를 기반으로 한 호스팅 서비스입니다. 설정할 것이 없고, AI 회의록, 가상 배경, 화면 효과 같은 추가 기능도 있습니다.
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## 기능
 
 - 컴퓨터와 휴대폰의 최신 브라우저에서 음성·화상 회의

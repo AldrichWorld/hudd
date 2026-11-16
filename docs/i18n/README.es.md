@@ -7,6 +7,8 @@ Instala la tuya con un solo comando.
 
 > **¿Solo quieres reunirte?** [hudd.live](https://hudd.live) es el servicio alojado basado en Hudd: no hay nada que configurar y añade extras como notas de reunión con IA, fondos virtuales y efectos en pantalla.
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## Funciones
 
 - Reuniones de audio y vídeo en cualquier navegador moderno, en ordenadores y móviles

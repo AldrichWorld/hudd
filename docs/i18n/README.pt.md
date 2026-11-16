@@ -7,6 +7,8 @@ Rode a sua com um único comando.
 
 > **Só quer fazer uma reunião?** O [hudd.live](https://hudd.live) é o serviço hospedado construído sobre o Hudd: nada para configurar, com extras como notas de reunião com IA, fundos virtuais e efeitos na tela.
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## Recursos
 
 - Reuniões de áudio e vídeo em qualquer navegador moderno, em computadores e celulares

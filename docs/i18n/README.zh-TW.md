@@ -7,6 +7,8 @@
 
 > **只想開個會？** [hudd.live](https://hudd.live) 是基於 Hudd 的線上服務：不用部署，打開就能用，另有 AI 會議記錄、虛擬背景、螢幕特效等功能。
 
+<p align="center"><a href="https://hudd.live"><img src="../../docs/assets/huddle-card.png" alt="Huddle · hudd.live" width="640"></a></p>
+
 ## 功能
 
 - 電腦和手機上的主流瀏覽器都能開影音會議
