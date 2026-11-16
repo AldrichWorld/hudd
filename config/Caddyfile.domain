@@ -1,0 +1,22 @@
+# Public mode (server + domain name): Caddy gets and renews a free Let's Encrypt certificate.
+# Caddy listens on 8080/8443 inside the container; docker-compose maps them to 80/443.
+{
+	http_port 8080
+	https_port 8443
+	email {$ACME_EMAIL}
+	admin off
+	servers {
+		trusted_proxies static private_ranges {$TRUSTED_PROXIES}
+	}
+}
+
+{$DOMAIN} {
+	@livekit path /rtc /rtc/* /twirp/*
+	handle @livekit {
+		reverse_proxy livekit:7880
+	}
+	handle {
+		encode zstd gzip
+		reverse_proxy web:8000
+	}
+}

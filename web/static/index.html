@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{APP_NAME}}</title>
+<meta name="description" content="Free video meetings in your browser: nothing to install, no account, no time limits. Open source and self-hosted.">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="icon" type="image/svg+xml" href="/static/brand/favicon.svg">
+<meta name="theme-color" content="#061a13">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/brand/app/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{APP_NAME}}">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+</head>
+<body>
+<div class="home">
+  <div class="topbar">
+    <a class="logo" href="/"><img src="/static/brand/logo-mark.svg" alt="{{APP_NAME}}"></a>
+    <a class="brand" href="/">{{APP_NAME}}<small>Video Conferencing</small></a>
+    <span class="spacer"></span>
+    <button class="install-btn hidden" id="installBtn" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg><span data-i18n="pwa.install"></span></button>
+    <div data-lang-switch></div>
+  </div>
+
+  <main class="lp">
+    <section class="lp-copy">
+      <h1 class="lp-h" data-i18n-html="app.tagline">Connect with people anywhere in the world. All you need is a browser.</h1>
+      <p class="lp-lead" data-i18n="home.lead"></p>
+      <div class="lp-actions">
+        <button class="btn lp-new" type="button" id="newBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="home.newBtn"></span></button>
+        <form class="lp-join" id="joinForm" autocomplete="on" novalidate>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
+          <input id="jCode" name="code" autocomplete="off" spellcheck="false" data-i18n-ph="home.codePh" aria-label="Meeting ID or link">
+          <button type="submit" id="joinBtn" data-i18n="home.joinBtn">Join</button>
+        </form>
+      </div>
+      <div class="err lp-err" id="jErr"></div>
+    </section>
+
+    <section class="lp-visual" aria-hidden="true">
+      <div class="bezel">
+      <div class="mock">
+        <div class="mock-top"><b></b><b></b><b></b><span id="mockTitle"></span></div>
+        <div class="mock-tiles">
+          <div class="mt spk" style="--c:#2f8f68"><span class="av">L</span><span class="nm">Lin</span></div>
+          <div class="mt" style="--c:#a0603a"><span class="av">M</span><span class="nm">Mike</span></div>
+          <div class="mt" style="--c:#3a62a0"><span class="av">K</span><span class="nm">Kenji</span></div>
+          <div class="mt" style="--c:#7d3aa0"><span class="av">S</span><span class="nm">Sofia</span></div>
+          <div class="mt" style="--c:#a03a5c"><span class="av">A</span><span class="nm">Amara</span></div>
+          <div class="mt" style="--c:#5f8f2f"><span class="av">J</span><span class="nm">Jonas</span></div>
+        </div>
+        <div class="mock-bar"><span></span><span></span><span></span><span></span><span class="end"></span></div>
+      </div>
+      <div class="bezel-chin"><img src="/static/brand/logo-mark.svg" alt=""><span>{{APP_NAME}}</span></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="feats" id="feats">
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><div><b data-i18n="feat.1"></b><span data-i18n="feat.1d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg><div><b data-i18n="feat.2"></b><span data-i18n="feat.2d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.2 8.5a4.9 4.9 0 1 1 0 7c-2.3-2.3-4.1-4.7-6.2-7-2.1-2.3-3.9-4.7-6.2-7"/><path d="M5.8 15.5a4.9 4.9 0 1 1 0-7c2.3 2.3 4.1 4.7 6.2 7"/></svg><div><b data-i18n="feat.3"></b><span data-i18n="feat.3d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M12 8v6M9 11l3-3 3 3"/></svg><div><b data-i18n="feat.4"></b><span data-i18n="feat.4d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><div><b data-i18n="feat.5"></b><span data-i18n="feat.5d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="13" height="10" rx="1.5"/><path d="M5 19h7"/><rect x="16" y="8" width="6" height="12" rx="1.5"/></svg><div><b data-i18n="feat.6"></b><span data-i18n="feat.6d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><div><b data-i18n="feat.7"></b><span data-i18n="feat.7d"></span></div></div>
+    <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div><b data-i18n="feat.8"></b><span data-i18n="feat.8d"></span></div></div>
+  </div>
+
+  <div class="modal-bg hidden" id="newBox">
+    <form class="modal new-box" id="createForm" autocomplete="on">
+      <button class="x" type="button" id="newClose" aria-label="Close">×</button>
+      <h3 data-i18n="home.create">Start a meeting</h3>
+      <div class="sub" id="createSub" data-i18n="home.createSub"></div>
+      <label for="cNick" data-i18n="field.nick">Name</label>
+      <input id="cNick" name="nickname" required maxlength="32" data-i18n-ph="field.nickPh">
+      <div id="cPassWrap" class="hidden">
+        <label for="cPass" data-i18n="home.passcode">Passcode</label>
+        <input id="cPass" name="passcode" type="password" autocomplete="off" data-i18n-ph="home.passcodePh">
+      </div>
+      <details class="more" id="cMore">
+        <summary data-i18n="home.more">More options</summary>
+        <label for="cTitle" data-i18n="home.topic">Topic</label>
+        <input id="cTitle" name="title" maxlength="64" data-i18n-ph="home.topicPh">
+        <label for="cRoomPass" data-i18n="pwd.setLabel">Meeting password (optional)</label>
+        <input id="cRoomPass" name="room_pass" maxlength="32" autocomplete="off" spellcheck="false" data-i18n-ph="pwd.setPh">
+      </details>
+      <button class="btn block" type="submit" id="createBtn" data-i18n="home.createBtn">Create and join</button>
+      <div class="err" id="cErr"></div>
+    </form>
+  </div>
+
+  <div class="foot"><span data-i18n="app.foot"></span> · <a id="srcLink" href="#" target="_blank" rel="noopener" data-i18n="app.source"></a> · <a href="/static/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener" data-i18n="app.licenses"></a></div>
+</div>
+<script src="/static/js/i18n.js"></script>
+<script src="/static/js/common.js"></script>
+<script src="/static/js/home.js"></script>
+</body>
+</html>

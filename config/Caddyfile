@@ -1,0 +1,30 @@
+# Local / LAN mode: one address for the web pages and LiveKit signalling.
+{
+	auto_https disable_redirects
+	admin off
+	servers {
+		trusted_proxies static private_ranges {$TRUSTED_PROXIES}
+	}
+}
+
+(routes) {
+	@livekit path /rtc /rtc/* /twirp/*
+	handle @livekit {
+		reverse_proxy livekit:7880
+	}
+	handle {
+		encode zstd gzip
+		reverse_proxy web:8000
+	}
+}
+
+# This computer: http://localhost:8080 (localhost counts as secure, so camera and microphone work)
+http://:8080 {
+	import routes
+}
+
+# Other devices on your network: https://<PUBLIC_HOST>:8443 (self-signed certificate)
+https://localhost:8443, https://{$PUBLIC_HOST}:8443 {
+	tls internal
+	import routes
+}

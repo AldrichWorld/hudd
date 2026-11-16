@@ -1,0 +1,4 @@
+__pycache__
+*.pyc
+vendor-src/node_modules
+static/vendor

@@ -1,0 +1,14 @@
+# settings and secrets
+.env
+config/livekit.yaml
+# front-end dependency (built from web/vendor-src)
+web/static/vendor/
+web/vendor-src/node_modules/
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+# test output
+tests/shots/
+.DS_Store

@@ -1,0 +1,12 @@
+# LiveKit for local tests (single node, no Redis)
+port: 7880
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  use_external_ip: false
+  node_ip: 127.0.0.1
+keys:
+  testkey: testsecret_testsecret_testsecret_1234
+room:
+  auto_create: false
+  departure_timeout: 10

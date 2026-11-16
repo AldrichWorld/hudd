@@ -1,0 +1,20 @@
+# Behind your own web server: Caddy or Nginx on the host already uses 80/443 and handles HTTPS.
+# Hudd only serves plain HTTP on 127.0.0.1:${HTTP_PORT} (default 18080); forward your domain to it.
+{
+	auto_https off
+	admin off
+	servers {
+		trusted_proxies static private_ranges {$TRUSTED_PROXIES}
+	}
+}
+
+http://:8080 {
+	@livekit path /rtc /rtc/* /twirp/*
+	handle @livekit {
+		reverse_proxy livekit:7880
+	}
+	handle {
+		encode zstd gzip
+		reverse_proxy web:8000
+	}
+}

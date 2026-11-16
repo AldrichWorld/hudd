@@ -1,0 +1,29 @@
+Hudd - third-party software
+===========================
+
+Hudd itself is released under the MIT License (see LICENSE in the source repository).
+It uses the following third-party software. Each keeps its own license.
+
+Delivered to your browser
+-------------------------
+- livekit-client (LiveKit JavaScript SDK) - Apache License 2.0
+  https://github.com/livekit/client-sdk-js
+- Poppins font - SIL Open Font License 1.1 (see fonts/LICENSE-Poppins.txt)
+  https://github.com/itfoundry/Poppins
+- Inter font - SIL Open Font License 1.1 (see fonts/LICENSE-Inter.txt)
+  https://github.com/rsms/inter
+
+Running on the server
+---------------------
+- LiveKit server (media server, Docker image livekit/livekit-server) - Apache License 2.0
+  https://github.com/livekit/livekit
+- Caddy (web server and automatic HTTPS, Docker image caddy) - Apache License 2.0
+  https://github.com/caddyserver/caddy
+- livekit-api (LiveKit server SDK for Python) - Apache License 2.0
+  https://github.com/livekit/python-sdks
+- FastAPI - MIT License
+  https://github.com/fastapi/fastapi
+- Uvicorn - BSD 3-Clause License
+  https://github.com/encode/uvicorn
+
+The full license texts are available at the links above.

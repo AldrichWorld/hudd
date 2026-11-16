@@ -1,0 +1,8 @@
+{
+  "name": "hudd-vendor",
+  "private": true,
+  "description": "Front-end dependency, bundled into static/vendor when the image is built (no CDN at runtime)",
+  "dependencies": {
+    "livekit-client": "2.22.4"
+  }
+}

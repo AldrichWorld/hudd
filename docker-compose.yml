@@ -1,0 +1,60 @@
+name: ${COMPOSE_PROJECT_NAME:-hudd}
+
+# Three services and nothing to back up: Hudd keeps no database.
+services:
+  livekit:
+    image: livekit/livekit-server:v1.12.0
+    restart: unless-stopped
+    command: ["--config", "/etc/livekit.yaml"]
+    volumes:
+      - ./config/livekit.yaml:/etc/livekit.yaml:ro
+    ports:
+      - "${LIVEKIT_TCP_PORT:-7881}:${LIVEKIT_TCP_PORT:-7881}/tcp"
+      - "${LIVEKIT_UDP_PORT:-7882}:${LIVEKIT_UDP_PORT:-7882}/udp"
+
+  web:
+    build: ./web
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-Hudd}
+      LIVEKIT_URL: ws://livekit:7880
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      SECRET_KEY: ${SECRET_KEY}
+      DOMAIN: ${DOMAIN:-}
+      PUBLIC_HOST: ${PUBLIC_HOST}
+      HTTPS_PORT: ${HTTPS_PORT:-8443}
+      CREATE_PASSCODE: ${CREATE_PASSCODE:-}
+      ROOM_EMPTY_TIMEOUT: ${ROOM_EMPTY_TIMEOUT:-1800}
+      ROOM_DEPARTURE_TIMEOUT: ${ROOM_DEPARTURE_TIMEOUT:-120}
+      ROOMS_PER_HOUR_PER_IP: ${ROOMS_PER_HOUR_PER_IP:-20}
+      OPEN_ROOMS_PER_IP: ${OPEN_ROOMS_PER_IP:-10}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+      SOURCE_URL: ${SOURCE_URL-https://github.com/AldrichWorld/hudd}
+    depends_on:
+      - livekit
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+      interval: 10s
+      retries: 6
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
+      DOMAIN: ${DOMAIN:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+    ports:
+      - "${HTTP_BIND:-0.0.0.0}:${HTTP_PORT:-8080}:8080"
+      - "${HTTPS_BIND:-0.0.0.0}:${HTTPS_PORT:-8443}:8443"
+    volumes:
+      - ./config/${CADDYFILE:-Caddyfile}:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - web
+      - livekit
+
+volumes:
+  caddy_data:
