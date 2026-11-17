@@ -4,8 +4,19 @@
 
 # Hudd
 
+<p align="center">
+<a href="../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-3EE59A" alt="MIT license"></a>
+<a href="https://github.com/AldrichWorld/hudd/releases"><img src="https://img.shields.io/github/v/release/AldrichWorld/hudd?color=3EE59A" alt="Release"></a>
+<a href="https://github.com/AldrichWorld/hudd/stargazers"><img src="https://img.shields.io/github/stars/AldrichWorld/hudd?color=3EE59A" alt="Stars"></a>
+<img src="https://img.shields.io/badge/deploy-docker%20compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+<img src="https://img.shields.io/badge/built%20on-LiveKit-111827" alt="Built on LiveKit">
+<img src="https://img.shields.io/badge/languages-13-3EE59A" alt="13 languages">
+</p>
+
 **جلسه‌های ویدیویی رایگان که در مرورگر اجرا می‌شوند.** بدون نصب، بدون حساب کاربری، بدون محدودیت زمانی و بدون پایگاه داده.
 نسخهٔ خودتان را با یک فرمان راه‌اندازی کنید.
+
+<p align="center"><img src="../../docs/assets/screenshot-meeting.jpg" alt="A Hudd meeting: grid of four people, member list and chat" width="900"></p>
 
 > **فقط می‌خواهید جلسه بگذارید؟** [hudd.live](https://hudd.live) سرویس میزبانی‌شده‌ای است که بر پایهٔ Hudd ساخته شده: نیازی به راه‌اندازی نیست و امکاناتی مثل یادداشت‌های جلسه با هوش مصنوعی، پس‌زمینهٔ مجازی و جلوه‌های صفحه هم دارد.
 

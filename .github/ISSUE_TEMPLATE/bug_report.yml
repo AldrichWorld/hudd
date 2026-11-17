@@ -1,0 +1,34 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Steps to reproduce, and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome 131 on Windows 11, Safari on iPhone 15 ...
+    validations:
+      required: true
+  - type: dropdown
+    id: deploy
+    attributes:
+      label: How do you run Hudd?
+      options: [Docker (deploy.sh), From source (systemd), Local test, Other]
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "1.0.0, or the output of git log --oneline -1"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "./deploy.sh logs, or the browser console. Remove any secrets first."
+      render: text

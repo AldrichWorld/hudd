@@ -2,8 +2,19 @@
 
 # Hudd
 
+<p align="center">
+<a href="../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-3EE59A" alt="MIT license"></a>
+<a href="https://github.com/AldrichWorld/hudd/releases"><img src="https://img.shields.io/github/v/release/AldrichWorld/hudd?color=3EE59A" alt="Release"></a>
+<a href="https://github.com/AldrichWorld/hudd/stargazers"><img src="https://img.shields.io/github/stars/AldrichWorld/hudd?color=3EE59A" alt="Stars"></a>
+<img src="https://img.shields.io/badge/deploy-docker%20compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+<img src="https://img.shields.io/badge/built%20on-LiveKit-111827" alt="Built on LiveKit">
+<img src="https://img.shields.io/badge/languages-13-3EE59A" alt="13 languages">
+</p>
+
 **Videollamadas gratuitas que funcionan en el navegador.** Sin instalar nada, sin cuentas, sin límite de tiempo y sin base de datos.
 Instala la tuya con un solo comando.
+
+<p align="center"><img src="../../docs/assets/screenshot-meeting.jpg" alt="A Hudd meeting: grid of four people, member list and chat" width="900"></p>
 
 > **¿Solo quieres reunirte?** [hudd.live](https://hudd.live) es el servicio alojado basado en Hudd: no hay nada que configurar y añade extras como notas de reunión con IA, fondos virtuales y efectos en pantalla.
 

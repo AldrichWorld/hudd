@@ -2,8 +2,19 @@
 
 # Hudd
 
+<p align="center">
+<a href="../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-3EE59A" alt="MIT license"></a>
+<a href="https://github.com/AldrichWorld/hudd/releases"><img src="https://img.shields.io/github/v/release/AldrichWorld/hudd?color=3EE59A" alt="Release"></a>
+<a href="https://github.com/AldrichWorld/hudd/stargazers"><img src="https://img.shields.io/github/stars/AldrichWorld/hudd?color=3EE59A" alt="Stars"></a>
+<img src="https://img.shields.io/badge/deploy-docker%20compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+<img src="https://img.shields.io/badge/built%20on-LiveKit-111827" alt="Built on LiveKit">
+<img src="https://img.shields.io/badge/languages-13-3EE59A" alt="13 languages">
+</p>
+
 **브라우저에서 바로 쓰는 무료 화상 회의.** 설치도, 계정도, 시간 제한도, 데이터베이스도 없습니다.
 명령어 하나로 내 서버에 설치하세요.
+
+<p align="center"><img src="../../docs/assets/screenshot-meeting.jpg" alt="A Hudd meeting: grid of four people, member list and chat" width="900"></p>
 
 > **회의만 하면 된다면:** [hudd.live](https://hudd.live)는 Hudd를 기반으로 한 호스팅 서비스입니다. 설정할 것이 없고, AI 회의록, 가상 배경, 화면 효과 같은 추가 기능도 있습니다.
 

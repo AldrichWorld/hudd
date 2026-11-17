@@ -2,8 +2,19 @@
 
 # Hudd
 
+<p align="center">
+<a href="../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-3EE59A" alt="MIT license"></a>
+<a href="https://github.com/AldrichWorld/hudd/releases"><img src="https://img.shields.io/github/v/release/AldrichWorld/hudd?color=3EE59A" alt="Release"></a>
+<a href="https://github.com/AldrichWorld/hudd/stargazers"><img src="https://img.shields.io/github/stars/AldrichWorld/hudd?color=3EE59A" alt="Stars"></a>
+<img src="https://img.shields.io/badge/deploy-docker%20compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+<img src="https://img.shields.io/badge/built%20on-LiveKit-111827" alt="Built on LiveKit">
+<img src="https://img.shields.io/badge/languages-13-3EE59A" alt="13 languages">
+</p>
+
 **Безкоштовні відеозустрічі просто в браузері.** Нічого не треба встановлювати, без акаунтів, без обмеження часу й без бази даних.
 Розгорніть власну копію однією командою.
+
+<p align="center"><img src="../../docs/assets/screenshot-meeting.jpg" alt="A Hudd meeting: grid of four people, member list and chat" width="900"></p>
 
 > **Потрібно просто провести зустріч?** [hudd.live](https://hudd.live) — хмарний сервіс на основі Hudd: нічого не треба налаштовувати, а ще є ШІ-нотатки зустрічі, віртуальні фони й ефекти на екрані.
 

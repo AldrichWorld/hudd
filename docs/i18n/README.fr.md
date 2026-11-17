@@ -2,8 +2,19 @@
 
 # Hudd
 
+<p align="center">
+<a href="../../LICENSE"><img src="https://img.shields.io/badge/license-MIT-3EE59A" alt="MIT license"></a>
+<a href="https://github.com/AldrichWorld/hudd/releases"><img src="https://img.shields.io/github/v/release/AldrichWorld/hudd?color=3EE59A" alt="Release"></a>
+<a href="https://github.com/AldrichWorld/hudd/stargazers"><img src="https://img.shields.io/github/stars/AldrichWorld/hudd?color=3EE59A" alt="Stars"></a>
+<img src="https://img.shields.io/badge/deploy-docker%20compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+<img src="https://img.shields.io/badge/built%20on-LiveKit-111827" alt="Built on LiveKit">
+<img src="https://img.shields.io/badge/languages-13-3EE59A" alt="13 languages">
+</p>
+
 **Des réunions vidéo gratuites, directement dans le navigateur.** Rien à installer, aucun compte, aucune limite de durée et aucune base de données.
 Installez la vôtre en une seule commande.
+
+<p align="center"><img src="../../docs/assets/screenshot-meeting.jpg" alt="A Hudd meeting: grid of four people, member list and chat" width="900"></p>
 
 > **Vous voulez simplement vous réunir ?** [hudd.live](https://hudd.live) est le service hébergé construit sur Hudd : rien à installer, avec en plus des notes de réunion par IA, des arrière-plans virtuels et des effets à l’écran.
 

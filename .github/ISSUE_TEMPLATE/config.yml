@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/AldrichWorld/hudd/discussions
+    about: Ask questions and share how you use Hudd.
+  - name: Just want to meet? Try hudd.live
+    url: https://hudd.live
+    about: The hosted service built on Hudd, nothing to set up.
