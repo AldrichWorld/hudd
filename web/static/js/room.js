@@ -464,12 +464,13 @@
   /* Screen sharing: mostly slides, documents and demos, where sharpness matters more than smoothness.
      - At most 10 frames per second and 2.5 Mbps; when the network or computer is busy, drop frames, keep resolution
        (maintain-resolution), and tell the browser this is detailed content (contentHint=detail).
-     - A single 1280×720 stream without a low-quality fallback: on lossy links the browser underestimates bandwidth,
+     - A single stream of up to 1920×1080 (720p made wide pages and small text blurry; still screens cost
+       little extra bitrate at the higher resolution), without a low-quality fallback: on lossy links the browser underestimates bandwidth,
        and with a fallback layer the server would keep sending the blurry one. Screens are mostly still, so the
        bitrate is usually low anyway.
      - When the sharer's own upload is tight, the screen gets priority over the camera. */
   const SCREEN_FPS = 10;
-  const SCREEN_CAPTURE = { resolution: { width: 1280, height: 720, frameRate: SCREEN_FPS }, contentHint: 'detail' };
+  const SCREEN_CAPTURE = { resolution: { width: 1920, height: 1080, frameRate: SCREEN_FPS }, contentHint: 'detail' };
   const SCREEN_PUBLISH = {
     screenShareEncoding: { maxBitrate: 2_500_000, maxFramerate: SCREEN_FPS, priority: 'high' },
     simulcast: false,
