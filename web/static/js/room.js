@@ -473,7 +473,8 @@
        bitrate is usually low anyway.
      - When the sharer's own upload is tight, the screen gets priority over the camera. */
   const SCREEN_FPS = 10;
-  const SCREEN_CAPTURE = { resolution: { width: 1920, height: 1080, frameRate: SCREEN_FPS }, contentHint: 'detail' };
+    // The share picker opens on the Window pane (Chrome/Edge); tab and entire screen stay available
+  const SCREEN_CAPTURE = { resolution: { width: 1920, height: 1080, frameRate: SCREEN_FPS }, contentHint: 'detail', video: { displaySurface: 'window' } };
   const SCREEN_PUBLISH = {
     screenShareEncoding: { maxBitrate: 2_500_000, maxFramerate: SCREEN_FPS, priority: 'high' },
     simulcast: false,

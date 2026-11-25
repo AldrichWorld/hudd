@@ -1,7 +1,7 @@
 /* Screen-share annotation: the person sharing their screen can highlight, point and draw on it.
    Strokes are drawn on a transparent layer over the shared-screen tile (never on the shared window itself)
    and sent to everyone as data messages, in coordinates relative to the shared picture (0–1), so they land on
-   the same spot whatever the viewer's screen size. Only the sharer draws.
+   the same spot whatever the viewer's screen size. Only the sharer draws, and only when sharing a single window.
    - Highlighter: wide, translucent; fades out a few seconds after the stroke ends
    - Laser pointer: a red dot with a short trail; gone right after the pointer is lifted
    - Pen: thin line that stays until undone or cleared
@@ -267,7 +267,7 @@
     canvas.className = 'anno-layer';
     const ov = { key: o.key, el: o.el, video: o.video, identity: o.identity, local: o.local, track: o.track, canvas, active: false, bar: null, pill: null };
     o.el.appendChild(canvas);
-    if (o.local) {
+    if (o.local && annotatable(o.track)) {
       const pill = document.createElement('button');
       pill.type = 'button'; pill.className = 'anno-pill';
       pill.onclick = (ev) => { ev.stopPropagation(); setActive(ov, true); };
@@ -326,11 +326,13 @@
     ov.pill.classList.toggle('hidden', on);
     paintBar(ov);
     if (!on) endStroke();
-    if (on) {
-      // sharing the whole screen while Huddle is on it shows a picture within a picture
-      const st = ov.track && ov.track.mediaStreamTrack && ov.track.mediaStreamTrack.getSettings ? ov.track.mediaStreamTrack.getSettings() : {};
-      if (st.displaySurface === 'monitor') toast(t('anno.mirror'), 7000);
-    }
+  }
+
+  // Annotation is offered only when a single window is shared: the meeting page stays visible next to it.
+  // A shared tab or whole screen covers the meeting page (or shows it inside the picture), so there it isn't offered.
+  // Browsers that don't report what was picked (displaySurface) get it too.
+  function annotatable(track) {
+    try { const st = track.mediaStreamTrack.getSettings(); return !st.displaySurface || st.displaySurface === 'window'; } catch { return true; }
   }
 
   /* ---------- public ---------- */
@@ -343,7 +345,7 @@
     room.on(LK.RoomEvent.LocalTrackPublished, (pub) => {
       if (pub.source !== LK.Track.Source.ScreenShare) return;
       mapOf(localId()).clear(); order = []; localAspect = 0;
-      toast(t('anno.tip'), 6000);
+      if (pub.track && annotatable(pub.track)) toast(t('anno.tip'), 6000);
     });
     room.on(LK.RoomEvent.LocalTrackUnpublished, (pub) => {
       if (pub.source !== LK.Track.Source.ScreenShare) return;

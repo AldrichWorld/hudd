@@ -1,5 +1,6 @@
-"""Screen-share annotation (sharer only), three browsers with different window sizes:
-1 only the sharer gets the Annotate button and toolbar; viewers can't draw
+"""Screen-share annotation (sharer only, single-window shares only), three browsers with different window sizes:
+0 the share picker is asked to open on the Window pane; sharing a whole screen (or a tab) offers no Annotate button
+1 sharing a window: only the sharer gets the Annotate button and toolbar; viewers can't draw
 2 a pen stroke lands on the same spot of the shared picture for viewers with very different windows (wide desktop, tall phone),
   shown about as late as the picture itself (receive buffer)
 3 undo removes it; the highlighter fades by itself; the laser pointer disappears when lifted
@@ -67,6 +68,12 @@ async def main():
             await c.add_init_script("try{localStorage.setItem('lkm.devicePrefs',JSON.stringify({mic:false,cam:false}));localStorage.setItem('hudd.devicePrefs',JSON.stringify({mic:false,cam:false}))}catch(e){}")
             return await c.new_page()
         a = await page(1280, 800)                 # sharer
+        # the test browser can only share a fake "entire screen": record what the page asks the picker for, and let the
+        # test decide what the picked surface reports (window.__surface)
+        await a.add_init_script("""(() => { const g = navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
+          navigator.mediaDevices.getDisplayMedia = (o) => { window.__gdm = JSON.stringify(o); return g(o); };
+          const gs = MediaStreamTrack.prototype.getSettings;
+          MediaStreamTrack.prototype.getSettings = function () { const s = gs.call(this); if (s.displaySurface && window.__surface) s.displaySurface = window.__surface; return s; }; })()""")
         v1 = await page(1600, 900)                # wide desktop viewer
         v2 = await page(390, 844, is_mobile=True, has_touch=True)   # tall phone viewer
 
@@ -76,7 +83,18 @@ async def main():
         for p, n in ((v1, "Bo"), (v2, "Cy")):
             await p.goto(f"{BASE}/r/{code}"); await p.fill("#pjNick", n); await p.click("#pjBtn"); await p.wait_for_selector("#meeting:not(.hidden)")
 
-        # 1 share: only the sharer gets the Annotate button
+        # 0 whole screen: no Annotate button; the picker was asked to open on windows
+        await a.evaluate("window.__surface = 'monitor'")
+        await a.click("#cScreen")
+        await until(v1, f"({GEOM})() !== null", timeout=20000)
+        assert '"displaySurface":"window"' in await a.evaluate("window.__gdm"), await a.evaluate("window.__gdm")
+        await asyncio.sleep(1)
+        assert await a.locator(".anno-pill").count() == 0, "no Annotate when sharing the whole screen"
+        await a.click("#cScreen"); await until(v1, f"({GEOM})() === null")
+        print("0 the picker opens on windows; sharing the whole screen offers no Annotate button")
+
+        # 1 share a window: only the sharer gets the Annotate button
+        await a.evaluate("window.__surface = 'window'")
         await a.click("#cScreen")
         await until(a, f"({GEOM})() !== null", timeout=20000)
         for p in (v1, v2):
