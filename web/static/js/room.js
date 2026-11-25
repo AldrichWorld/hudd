@@ -485,6 +485,8 @@
   };
   $('cScreen').onclick = async () => {
     const on = !room.localParticipant.isScreenShareEnabled;
+    // Before the share picker opens: annotation works only for a shared window (the browser's picker can't carry a note)
+    if (on) toast(t('anno.onlyWindow'), 6000);
     await room.localParticipant.setScreenShareEnabled(on, on ? SCREEN_CAPTURE : undefined, on ? SCREEN_PUBLISH : undefined)
       .catch((e) => { if (e.name !== 'NotAllowedError') toast(t('t.screen', { err: e.message })); });
     renderAll();

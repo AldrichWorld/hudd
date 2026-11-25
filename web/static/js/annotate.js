@@ -345,7 +345,7 @@
     room.on(LK.RoomEvent.LocalTrackPublished, (pub) => {
       if (pub.source !== LK.Track.Source.ScreenShare) return;
       mapOf(localId()).clear(); order = []; localAspect = 0;
-      if (pub.track && annotatable(pub.track)) toast(t('anno.tip'), 6000);
+      if (pub.track) toast(t(annotatable(pub.track) ? 'anno.tip' : 'anno.onlyWindow'), 6000);   // a tab or the whole screen: say again why there's no Annotate
     });
     room.on(LK.RoomEvent.LocalTrackUnpublished, (pub) => {
       if (pub.source !== LK.Track.Source.ScreenShare) return;

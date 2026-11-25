@@ -90,8 +90,9 @@ async def main():
         assert '"displaySurface":"window"' in await a.evaluate("window.__gdm"), await a.evaluate("window.__gdm")
         await asyncio.sleep(1)
         assert await a.locator(".anno-pill").count() == 0, "no Annotate when sharing the whole screen"
+        assert await a.evaluate("[...document.querySelectorAll('.toast')].some(t => t.textContent.includes('only when you share a single window'))")
         await a.click("#cScreen"); await until(v1, f"({GEOM})() === null")
-        print("0 the picker opens on windows; sharing the whole screen offers no Annotate button")
+        print("0 the picker opens on windows (with a tip that annotation needs a window); sharing the whole screen offers no Annotate button")
 
         # 1 share a window: only the sharer gets the Annotate button
         await a.evaluate("window.__surface = 'window'")
