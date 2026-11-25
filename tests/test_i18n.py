@@ -7,9 +7,10 @@ from pathlib import Path
 
 STATIC = Path(__file__).resolve().parent.parent / "web" / "static"
 js = (STATIC / "js" / "i18n.js").read_text(encoding="utf-8")
-out = subprocess.run(["node", "-e", "global.window={};global.document={querySelectorAll:()=>[],documentElement:{dataset:{}}};"
+# the script goes in on stdin (i18n.js is larger than one command-line argument may be)
+out = subprocess.run(["node"], input="global.window={};global.document={querySelectorAll:()=>[],documentElement:{dataset:{}}};"
                       "global.localStorage={getItem:()=>null,setItem:()=>{}};global.location={search:''};"
-                      + js + ";const r={};for(const l of I18N.LANGS)r[l.code]=I18N.dict(l.code);console.log(JSON.stringify(r))"],
+                      + js + ";const r={};for(const l of I18N.LANGS)r[l.code]=I18N.dict(l.code);console.log(JSON.stringify(r))",
                      capture_output=True, text=True, check=True).stdout
 D = json.loads(out)
 assert len(D) == 13, list(D)

@@ -26,5 +26,6 @@ python test_i18n.py
 if python -c "import playwright" 2>/dev/null; then
   python test_meeting.py
   python test_home.py
+  python test_annotate.py
 fi
 echo "ALL TESTS PASSED"

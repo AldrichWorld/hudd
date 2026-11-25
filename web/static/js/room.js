@@ -141,6 +141,8 @@
     if (info.role === 'owner' && info.room.password) { const hp = store.get('hudd.hostPwd', {}); hp[code] = info.room.password; store.set('hudd.hostPwd', hp); }
     room = new LK.Room({ adaptiveStream: true, dynacast: true });
     bindRoomEvents();
+  // Screen-share annotation: only the sharer draws (highlighter, laser pointer, pen); viewers see the strokes
+    HuddleAnno.init({ room, LK, t: I18N.t, toast, delayMs: SCREEN_BUFFER_MS });
     const lkUrl = info.livekit_url || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`;
     await room.connect(lkUrl, info.token);
     try { await room.startAudio(); } catch {}
@@ -332,6 +334,7 @@
     else { grid.replaceChildren(); while (mainArea.children.length > 1) strip.prepend(mainArea.lastElementChild); }
     const n = entries.length;
     grid.style.setProperty('--cols', n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : 4);
+    HuddleAnno.sync(entries.filter((e) => e.screen && !e.media && e.track).map((e) => ({ key: e.key, el: tiles.get(e.key).el, video: tiles.get(e.key).video, identity: e.p.identity, local: e.p === room.localParticipant, track: e.track })));
   }
 
   // Speaker layout without a pin or share follows the active speaker (at most every 2 s, to avoid jumping)
@@ -729,6 +732,7 @@
 
   // Language switch: repaint the dynamic text
   I18N.onChange(() => {
+    if (window.HuddleAnno) HuddleAnno.relabel();
     if (!$('prejoin').classList.contains('hidden')) relabelPrejoin();
     if (room && !$('meeting').classList.contains('hidden')) { $('mCode').textContent = codeLabel(); renderAll(); }
     if (!$('ended').classList.contains('hidden')) paintEnded();
