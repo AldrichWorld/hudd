@@ -141,8 +141,6 @@
     if (info.role === 'owner' && info.room.password) { const hp = store.get('hudd.hostPwd', {}); hp[code] = info.room.password; store.set('hudd.hostPwd', hp); }
     room = new LK.Room({ adaptiveStream: true, dynacast: true });
     bindRoomEvents();
-  // Screen-share annotation: only the sharer draws (highlighter, laser pointer, pen); viewers see the strokes
-    HuddleAnno.init({ room, LK, t: I18N.t, toast, delayMs: SCREEN_BUFFER_MS });
     const lkUrl = info.livekit_url || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`;
     await room.connect(lkUrl, info.token);
     try { await room.startAudio(); } catch {}
@@ -334,7 +332,6 @@
     else { grid.replaceChildren(); while (mainArea.children.length > 1) strip.prepend(mainArea.lastElementChild); }
     const n = entries.length;
     grid.style.setProperty('--cols', n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : 4);
-    HuddleAnno.sync(entries.filter((e) => e.screen && !e.media && e.track).map((e) => ({ key: e.key, el: tiles.get(e.key).el, video: tiles.get(e.key).video, identity: e.p.identity, local: e.p === room.localParticipant, track: e.track })));
   }
 
   // Speaker layout without a pin or share follows the active speaker (at most every 2 s, to avoid jumping)
@@ -473,8 +470,7 @@
        bitrate is usually low anyway.
      - When the sharer's own upload is tight, the screen gets priority over the camera. */
   const SCREEN_FPS = 10;
-    // The share picker opens on the Window pane (Chrome/Edge); tab and entire screen stay available
-  const SCREEN_CAPTURE = { resolution: { width: 1920, height: 1080, frameRate: SCREEN_FPS }, contentHint: 'detail', video: { displaySurface: 'window' } };
+  const SCREEN_CAPTURE = { resolution: { width: 1920, height: 1080, frameRate: SCREEN_FPS }, contentHint: 'detail' };
   const SCREEN_PUBLISH = {
     screenShareEncoding: { maxBitrate: 2_500_000, maxFramerate: SCREEN_FPS, priority: 'high' },
     simulcast: false,
@@ -485,8 +481,6 @@
   };
   $('cScreen').onclick = async () => {
     const on = !room.localParticipant.isScreenShareEnabled;
-    // Before the share picker opens: annotation works only for a shared window (the browser's picker can't carry a note)
-    if (on) toast(t('anno.onlyWindow'), 6000);
     await room.localParticipant.setScreenShareEnabled(on, on ? SCREEN_CAPTURE : undefined, on ? SCREEN_PUBLISH : undefined)
       .catch((e) => { if (e.name !== 'NotAllowedError') toast(t('t.screen', { err: e.message })); });
     renderAll();
@@ -735,7 +729,6 @@
 
   // Language switch: repaint the dynamic text
   I18N.onChange(() => {
-    if (window.HuddleAnno) HuddleAnno.relabel();
     if (!$('prejoin').classList.contains('hidden')) relabelPrejoin();
     if (room && !$('meeting').classList.contains('hidden')) { $('mCode').textContent = codeLabel(); renderAll(); }
     if (!$('ended').classList.contains('hidden')) paintEnded();
