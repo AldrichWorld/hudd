@@ -7,13 +7,8 @@
    - Pen: thin line that stays until undone or cleared
    Viewers receive the screen picture through a ~1 s receive buffer, so strokes are shown with the same delay
    (measured from the video receiver when possible) to stay in step with the picture.
-   The sharer usually works in another window or tab, so on Chrome/Edge "Annotate" opens a floating, always-on-top
-   window (Document Picture-in-Picture) with a live preview of the shared picture to draw on; other browsers draw on
-   the shared-screen tile inside the meeting page.
-   Usage: HuddleAnno.init({ room, LK, t, toast, delayMs }); HuddleAnno.sync([{ key, el, video, identity, local, track }])
-   after every layout render; HuddleAnno.open() from an "Annotate" button; HuddleAnno.captureOptions(opts) for
-   setScreenShareEnabled (keeps the meeting page in front after picking a tab or window); HuddleAnno.relabel()
-   after a language change. */
+   Usage: HuddleAnno.init({ room, LK, t, toast, delayMs }); HuddleAnno.sync([{ key, el, video, identity, local }])
+   after every layout render; HuddleAnno.relabel() after a language change. */
 (() => {
   const TOPIC = 'huddle.anno';
   const HL_HOLD = 2500, HL_FADE = 800;        // highlighter: visible, then fading (ms)
@@ -27,10 +22,9 @@
   const strokes = new Map();   // sharer identity -> Map(strokeId -> stroke)
   const overlays = new Map();  // tile key -> overlay
   const queue = [];            // incoming messages waiting for the video delay: { at, from, msg }
-  let raf = 0, rafPad = 0;
-  let pad = null;              // the floating annotation window: { win, ov }
+  let raf = 0;
   // the local sharer's drawing state
-  let tool = 'hl', drawing = null, pending = [], lastFlush = 0, order = [], seq = 0, localAspect = 0;
+  let tool = 'hl', drawing = null, pending = [], sendTimer = 0, order = [], seq = 0, localAspect = 0;
 
   const now = () => performance.now();
   const enc = (o) => new TextEncoder().encode(JSON.stringify(o));
@@ -54,9 +48,8 @@
   }
 
   /* ---------- drawing ---------- */
-  const winOf = (ov) => ov.el.ownerDocument.defaultView || window;
   function resize(ov) {
-    const dpr = winOf(ov).devicePixelRatio || 1, W = ov.el.clientWidth, H = ov.el.clientHeight;
+    const dpr = window.devicePixelRatio || 1, W = ov.el.clientWidth, H = ov.el.clientHeight;
     const cw = Math.round(W * dpr), ch = Math.round(H * dpr);
     if (ov.canvas.width !== cw || ov.canvas.height !== ch) { ov.canvas.width = cw; ov.canvas.height = ch; }
   }
@@ -76,7 +69,7 @@
   // returns true while something on this layer is still changing (fading, laser trail)
   function draw(ov) {
     resize(ov);
-    const ctx = ov.canvas.getContext('2d'), dpr = winOf(ov).devicePixelRatio || 1;
+    const ctx = ov.canvas.getContext('2d'), dpr = window.devicePixelRatio || 1;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, ov.canvas.width, ov.canvas.height);
     const rc = contentRect(ov), m = strokes.get(ov.identity);
     if (!rc || !m || !m.size) return false;
@@ -120,22 +113,15 @@
     return busy;
   }
 
-  // one frame: apply due messages, redraw every layer. Runs on the meeting page's frames and, while the floating
-  // window is open, on its frames too (the meeting page may be hidden behind other windows, where frames stop).
-  function frame() {
+  function tick() {
+    raf = 0;
     const tnow = now();
     while (queue.length && queue[0].at <= tnow) { const q = queue.shift(); apply(q.from, q.msg, q.at); }
     let busy = queue.length > 0 || !!drawing;
     for (const ov of overlays.values()) if (draw(ov)) busy = true;
-    if (pad && draw(pad.ov)) busy = true;
-    return busy;
+    if (busy) raf = requestAnimationFrame(tick);
   }
-  function tick() { raf = 0; if (frame()) kick(); }
-  function tickPad() { rafPad = 0; if (frame()) kick(); }
-  function kick() {
-    if (!raf) raf = requestAnimationFrame(tick);
-    if (pad && !rafPad) { try { rafPad = pad.win.requestAnimationFrame(tickPad); } catch { rafPad = 0; } }
-  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
 
   /* ---------- messages ---------- */
   // pt: live points of a stroke (lossy) · end: the whole stroke (reliable) · undo / clear / reset · sync: kept strokes for a late joiner
@@ -200,7 +186,6 @@
   }
 
   function flush() {
-    lastFlush = now();
     if (!drawing || !pending.length) return;
     send({ t: 'pt', id: drawing.id, tool: drawing.tool, pts: pending }, false);
     pending = [];
@@ -210,13 +195,14 @@
     const id = `${localId()}.${Date.now().toString(36)}.${seq++}`;
     drawing = { id, tool, ov };
     mapOf(localId()).set(id, { tool, pts: [p], times: [now()], endAt: 0, lastAt: now() });
-    pending = [p]; flush();
+    pending = [p];
+    clearInterval(sendTimer); sendTimer = setInterval(flush, SEND_EVERY);
     kick();
   }
 
   function endStroke() {
     if (!drawing) return;
-    flush();
+    flush(); clearInterval(sendTimer);
     const s = mapOf(localId()).get(drawing.id);
     if (s) {
       s.endAt = now();
@@ -241,7 +227,6 @@
     const q = s.pts[s.pts.length - 1];
     if (q && Math.abs(q[0] - p[0]) < 0.002 && Math.abs(q[1] - p[1]) < 0.002) return;
     s.pts.push(p); s.times.push(now()); s.lastAt = now(); pending.push(p);
-    if (now() - lastFlush >= SEND_EVERY) flush();   // batches of ~40 ms (no timer: timers slow down in background tabs)
     if (s.pts.length >= MAX_PTS) { endStroke(); startStroke(ov, p); }
     kick();
   }
@@ -277,35 +262,6 @@
   };
   const svg = (k) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]}</svg>`;
 
-  // toolbar: tools, undo, clear, close
-  function makeBar(doc, ov, onClose) {
-    const bar = doc.createElement('div');
-    bar.className = 'anno-bar';
-    bar.innerHTML = ['hl', 'laser', 'pen'].map((k) => `<button type="button" data-tool="${k}">${svg(k)}</button>`).join('')
-      + '<span class="sep"></span>'
-      + ['undo', 'clear', 'close'].map((k) => `<button type="button" data-act="${k}">${svg(k)}</button>`).join('');
-    bar.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      const b = ev.target.closest('button'); if (!b) return;
-      if (b.dataset.tool) { tool = b.dataset.tool; paintAll(); }
-      if (b.dataset.act === 'undo') undo();
-      if (b.dataset.act === 'clear') clearAll();
-      if (b.dataset.act === 'close') onClose();
-    });
-    bar.addEventListener('dblclick', (ev) => ev.stopPropagation());
-    return bar;
-  }
-
-  function bindInput(ov) {
-    const c = ov.canvas;
-    c.addEventListener('pointerdown', (ev) => onDown(ov, ev));
-    c.addEventListener('pointermove', (ev) => onMove(ov, ev));
-    c.addEventListener('pointerup', endStroke);
-    c.addEventListener('pointercancel', endStroke);
-    c.addEventListener('dblclick', (ev) => { if (ov.active) ev.stopPropagation(); });
-  }
-
-  // drawing layer on a screen-share tile in the meeting page (plus, for one's own share, the Annotate button)
   function makeOverlay(o) {
     const canvas = document.createElement('canvas');
     canvas.className = 'anno-layer';
@@ -314,12 +270,28 @@
     if (o.local) {
       const pill = document.createElement('button');
       pill.type = 'button'; pill.className = 'anno-pill';
-      pill.onclick = (ev) => { ev.stopPropagation(); open(); };
-      const bar = makeBar(document, ov, () => setActive(ov, false));
-      bar.classList.add('hidden');
+      pill.onclick = (ev) => { ev.stopPropagation(); setActive(ov, true); };
+      const bar = document.createElement('div');
+      bar.className = 'anno-bar hidden';
+      bar.innerHTML = ['hl', 'laser', 'pen'].map((k) => `<button type="button" data-tool="${k}">${svg(k)}</button>`).join('')
+        + '<span class="sep"></span>'
+        + ['undo', 'clear', 'close'].map((k) => `<button type="button" data-act="${k}">${svg(k)}</button>`).join('');
+      bar.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const b = ev.target.closest('button'); if (!b) return;
+        if (b.dataset.tool) { tool = b.dataset.tool; paintBar(ov); }
+        if (b.dataset.act === 'undo') undo();
+        if (b.dataset.act === 'clear') clearAll();
+        if (b.dataset.act === 'close') setActive(ov, false);
+      });
+      bar.addEventListener('dblclick', (ev) => ev.stopPropagation());
       o.el.appendChild(pill); o.el.appendChild(bar);
       ov.pill = pill; ov.bar = bar;
-      bindInput(ov);
+      canvas.addEventListener('pointerdown', (ev) => onDown(ov, ev));
+      canvas.addEventListener('pointermove', (ev) => onMove(ov, ev));
+      canvas.addEventListener('pointerup', endStroke);
+      canvas.addEventListener('pointercancel', endStroke);
+      canvas.addEventListener('dblclick', (ev) => { if (ov.active) ev.stopPropagation(); });
       // the shared picture changed shape (another window, resized window): old strokes no longer fit
       o.video.addEventListener('resize', () => {
         const a = o.video.videoWidth / (o.video.videoHeight || 1);
@@ -334,86 +306,15 @@
     return ov;
   }
 
-  /* ---------- the floating annotation window (Chrome / Edge: Document Picture-in-Picture) ---------- */
-  const PAD_CSS = `
-    html, body { margin: 0; height: 100%; background: #06140f; overflow: hidden; font-family: system-ui, sans-serif; }
-    .anno-pad { position: relative; width: 100%; height: 100%; }
-    .anno-pad video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
-    .anno-layer { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
-    .anno-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 4px;
-      border-radius: 12px; border: 1px solid rgba(255,255,255,.16); background: rgba(10, 20, 16, .88); box-shadow: 0 6px 20px rgba(0,0,0,.35); }
-    .anno-bar button { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 34px; border: 0; border-radius: 8px;
-      background: transparent; color: #e8f3ee; cursor: pointer; }
-    .anno-bar button:hover { background: rgba(255,255,255,.1); }
-    .anno-bar button[data-tool="hl"].on { background: #ffdd00; color: #2a2300; }
-    .anno-bar button[data-tool="pen"].on, .anno-bar button[data-tool="laser"].on { background: #ff3b30; color: #fff; }
-    .anno-bar .sep { width: 1px; height: 22px; background: rgba(255,255,255,.18); margin: 0 4px; }`;
-  const PAD_SIZE_KEY = 'huddle.annoPad';
-  const canPad = () => 'documentPictureInPicture' in window;
-  const localTrack = () => { const pub = room && room.localParticipant.getTrackPublication(LK.Track.Source.ScreenShare); return pub && pub.track; };
-
-  async function openPad() {
-    if (pad) { try { pad.win.focus(); } catch {} return true; }
-    const track = localTrack(); if (!track) return false;
-    let size = { width: 720, height: 450 };
-    try { const s = JSON.parse(localStorage.getItem(PAD_SIZE_KEY) || 'null'); if (s && s.width > 200 && s.height > 150) size = s; } catch {}
-    let win;
-    try { win = await window.documentPictureInPicture.requestWindow(size); } catch { return false; }
-    const doc = win.document;
-    doc.title = t('anno.btn');
-    const st = doc.createElement('style'); st.textContent = PAD_CSS; doc.head.appendChild(st);
-    const el = doc.createElement('div'); el.className = 'anno-pad';
-    const video = doc.createElement('video'); video.autoplay = true; video.muted = true; video.playsInline = true;
-    video.srcObject = new MediaStream([track.mediaStreamTrack]);
-    const canvas = doc.createElement('canvas'); canvas.className = 'anno-layer';
-    el.append(video, canvas); doc.body.appendChild(el);
-    const ov = { key: 'pad', el, video, identity: localId(), local: true, track, canvas, active: true, pad: true };
-    ov.bar = makeBar(doc, ov, () => win.close());
-    el.appendChild(ov.bar);
-    bindInput(ov);
-    video.addEventListener('resize', kick);
-    win.addEventListener('resize', kick);
-    win.addEventListener('pagehide', () => {
-      try { localStorage.setItem(PAD_SIZE_KEY, JSON.stringify({ width: win.innerWidth, height: win.innerHeight })); } catch {}
-      if (drawing && drawing.ov === ov) endStroke();
-      if (pad && pad.win === win) { pad = null; rafPad = 0; paintAll(); }
-    });
-    video.play().catch(() => {});
-    pad = { win, ov };
-    labelOverlay(ov); paintAll(); kick();
-    return true;
-  }
-  function closePad() { if (pad) { const w = pad.win; pad = null; rafPad = 0; try { w.close(); } catch {} } }
-
-  // "Annotate": the floating window where available, otherwise drawing on the tile in the meeting page
-  async function open() {
-    if (!isSharing()) return;
-    if (canPad() && await openPad()) return;
-    const ov = [...overlays.values()].find((o) => o.local);
-    if (ov) setActive(ov, true);
-  }
-
-  // screen-share options: keep the meeting page in front after a tab or window is picked, so Annotate is at hand
-  function captureOptions(opts) {
-    try {
-      if (typeof CaptureController === 'undefined') return opts;
-      const c = new CaptureController();
-      if (c.setFocusBehavior) c.setFocusBehavior('focus-capturing-application');
-      return Object.assign({}, opts, { controller: c });
-    } catch { return opts; }
-  }
-
   function paintBar(ov) {
-    if (!ov || !ov.bar) return;
+    if (!ov.bar) return;
     ov.bar.querySelectorAll('[data-tool]').forEach((b) => b.classList.toggle('on', b.dataset.tool === tool));
     ov.canvas.dataset.tool = tool;
   }
-  function paintAll() { for (const ov of overlays.values()) paintBar(ov); if (pad) paintBar(pad.ov); }
 
   function labelOverlay(ov) {
-    if (!ov.bar) return;
-    if (ov.pill) ov.pill.innerHTML = `${svg('anno')}<span>${t('anno.btn')}</span>`;
-    if (ov.pad) ov.el.ownerDocument.title = t('anno.btn');
+    if (!ov.pill) return;
+    ov.pill.innerHTML = `${svg('anno')}<span>${t('anno.btn')}</span>`;
     const L = { hl: 'anno.hl', laser: 'anno.laser', pen: 'anno.pen', undo: 'anno.undo', clear: 'anno.clear', close: 'anno.close' };
     ov.bar.querySelectorAll('button').forEach((b) => { const k = L[b.dataset.tool || b.dataset.act]; b.title = t(k); b.setAttribute('aria-label', t(k)); });
   }
@@ -446,7 +347,7 @@
     });
     room.on(LK.RoomEvent.LocalTrackUnpublished, (pub) => {
       if (pub.source !== LK.Track.Source.ScreenShare) return;
-      endStroke(); closePad(); mapOf(localId()).clear(); order = []; send({ t: 'reset' }, true);
+      endStroke(); mapOf(localId()).clear(); order = []; send({ t: 'reset' }, true);
     });
     room.on(LK.RoomEvent.ParticipantDisconnected, (p) => { strokes.delete(p.identity); kick(); });
     clearInterval(measureTimer); measureTimer = setInterval(measure, 2000);
@@ -470,7 +371,7 @@
     kick();
   }
 
-  function relabel() { for (const ov of overlays.values()) labelOverlay(ov); if (pad) labelOverlay(pad.ov); }
+  function relabel() { for (const ov of overlays.values()) labelOverlay(ov); }
 
-  window.HuddleAnno = { init, sync, relabel, open, captureOptions, isOpen: () => !!pad };
+  window.HuddleAnno = { init, sync, relabel };
 })();
