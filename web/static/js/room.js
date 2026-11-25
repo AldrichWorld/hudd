@@ -453,6 +453,7 @@
     set('cCam', camOn, 'i-cam', 'i-cam-off', t('c.stopVideo'), t('c.startVideo'));
     set('cScreen', scrOn, 'i-screen', 'i-screen', t('c.stopShare'), t('c.share'), false);
     $('cScreen').classList.toggle('on-accent', scrOn);
+    $('cAnno').classList.toggle('hidden', !scrOn);
   }
 
   function renderAll() {
@@ -482,9 +483,10 @@
     videoCodec: 'vp9', backupCodec: true,
     degradationPreference: 'maintain-resolution',
   };
+  $('cAnno').onclick = () => HuddleAnno.open();
   $('cScreen').onclick = async () => {
     const on = !room.localParticipant.isScreenShareEnabled;
-    await room.localParticipant.setScreenShareEnabled(on, on ? SCREEN_CAPTURE : undefined, on ? SCREEN_PUBLISH : undefined)
+    await room.localParticipant.setScreenShareEnabled(on, on ? HuddleAnno.captureOptions(SCREEN_CAPTURE) : undefined, on ? SCREEN_PUBLISH : undefined)
       .catch((e) => { if (e.name !== 'NotAllowedError') toast(t('t.screen', { err: e.message })); });
     renderAll();
   };

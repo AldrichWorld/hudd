@@ -3,7 +3,9 @@
 2 a pen stroke lands on the same spot of the shared picture for viewers with very different windows (wide desktop, tall phone),
   shown about as late as the picture itself (receive buffer)
 3 undo removes it; the highlighter fades by itself; the laser pointer disappears when lifted
-4 someone who joins mid-share sees the strokes still on screen; stopping the share clears everything"""
+4 someone who joins mid-share sees the strokes still on screen; stopping the share clears everything
+   (steps 1–4: a browser without the floating window, like Safari/Firefox: drawing on the tile in the meeting page)
+5 Chrome's floating annotation window: always on top, live preview, drawing there reaches viewers"""
 import asyncio
 import os
 from playwright.async_api import async_playwright
@@ -66,7 +68,8 @@ async def main():
             c = await b.new_context(permissions=["camera", "microphone"], viewport={"width": w, "height": h}, **kw)
             await c.add_init_script("try{localStorage.setItem('lkm.devicePrefs',JSON.stringify({mic:false,cam:false}));localStorage.setItem('hudd.devicePrefs',JSON.stringify({mic:false,cam:false}))}catch(e){}")
             return await c.new_page()
-        a = await page(1280, 800)                 # sharer
+        a = await page(1280, 800)                 # sharer (first without the floating window, as in Safari/Firefox)
+        await a.add_init_script("try{delete window.documentPictureInPicture}catch(e){}")
         v1 = await page(1600, 900)                # wide desktop viewer
         v2 = await page(390, 844, is_mobile=True, has_touch=True)   # tall phone viewer
 
@@ -140,6 +143,40 @@ async def main():
         await asyncio.sleep(2.5)
         assert empty(await pixel(v1, 0.35, 0.3)), "a new share starts clean"
         print("4 a late joiner sees the strokes still on screen; a new share starts clean")
+        await a.click("#cScreen"); await until(v1, f"({GEOM})() === null")
+
+        # 5 floating window (Document Picture-in-Picture, Chrome/Edge)
+        if True:
+            hc = await b.new_context(permissions=["camera", "microphone"], viewport={"width": 1100, "height": 700})
+            await hc.add_init_script("try{localStorage.setItem('lkm.devicePrefs',JSON.stringify({mic:false,cam:false}));localStorage.setItem('hudd.devicePrefs',JSON.stringify({mic:false,cam:false}))}catch(e){}")
+            s2 = await hc.new_page()
+            await s2.goto(f"{BASE}/r/{code}"); await s2.fill("#pjNick", "Eve"); await s2.click("#pjBtn"); await s2.wait_for_selector("#meeting:not(.hidden)")
+            assert await s2.evaluate("'documentPictureInPicture' in window"), "no Document PiP in this browser"
+            assert await s2.is_hidden("#cAnno")                       # only while sharing
+            await s2.click("#cScreen"); await s2.wait_for_selector("#cAnno:not(.hidden)")
+            await until(v1, f"({GEOM})() !== null", timeout=20000)
+            await s2.click("#cAnno")
+            await until(s2, "documentPictureInPicture.window && documentPictureInPicture.window.document.querySelector('.anno-pad video').videoWidth > 0")
+            # draw in the floating window (pointer events dispatched inside it)
+            await s2.evaluate("""() => { const w = documentPictureInPicture.window, d = w.document, el = d.querySelector('.anno-pad'), v = el.querySelector('video'), c = el.querySelector('.anno-layer');
+              d.querySelector('[data-tool=pen]').click();
+              const W = el.clientWidth, H = el.clientHeight, s = Math.min(W / v.videoWidth, H / v.videoHeight), cw = v.videoWidth * s, ch = v.videoHeight * s, ox = (W - cw) / 2, oy = (H - ch) / 2;
+              const at = (nx, ny) => ({ clientX: ox + nx * cw, clientY: oy + ny * ch, pointerId: 1, button: 0, bubbles: true });
+              c.dispatchEvent(new w.PointerEvent('pointerdown', at(0.3, 0.5)));
+              for (let i = 1; i <= 10; i++) c.dispatchEvent(new w.PointerEvent('pointermove', at(0.3 + i * 0.04, 0.5)));
+              c.dispatchEvent(new w.PointerEvent('pointerup', at(0.7, 0.5))); }""")
+            for p in (v1, v2):
+                await wait_pixel(p, 0.5, 0.5, red)
+            pad_px = await s2.evaluate("""() => { const d = documentPictureInPicture.window.document, el = d.querySelector('.anno-pad'), c = el.querySelector('.anno-layer'), v = el.querySelector('video');
+              const W = el.clientWidth, H = el.clientHeight, s = Math.min(W / v.videoWidth, H / v.videoHeight), cw = v.videoWidth * s, ch = v.videoHeight * s, k = c.width / W;
+              return [...c.getContext('2d').getImageData(Math.round(((W - cw) / 2 + 0.5 * cw) * k), Math.round(((H - ch) / 2 + 0.5 * ch) * k), 1, 1).data]; }""")
+            assert red(pad_px), pad_px
+            if os.getenv("SHOTS_DIR"):
+                await v1.screenshot(path=f"{os.getenv('SHOTS_DIR')}/anno_pad_viewer.png")
+            await s2.click("#cScreen")
+            await until(s2, "!documentPictureInPicture.window")          # stopping the share closes the floating window
+            await hc.close()
+            print("5 floating annotation window: live preview, drawing there reaches viewers; closes when the share stops")
         await b.close()
     print("ANNOTATE OK")
 
